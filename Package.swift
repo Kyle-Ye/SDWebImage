@@ -16,6 +16,12 @@ let package = Package(
         .library(
             name: "SDWebImage",
             targets: ["SDWebImage"]),
+//        .library(
+//            name: "SDWebImageSwift",
+//            targets: ["SDWebImageSwift"]),
+//        .library(
+//            name: "SDWebImageObjc",
+//            targets: ["SDWebImageObjc"]),
         .library(
             name: "SDWebImageMapKit",
             targets: ["SDWebImageMapKit"])
@@ -29,19 +35,30 @@ let package = Package(
         // Targets can depend on other targets in this package, and on products in packages which this package depends on.
         .target(
             name: "SDWebImage",
-            dependencies: [],
+            dependencies: ["_SDWebImageSwift", "_SDWebImageObjc"]
+        ),
+        .target(
+            name: "_SDWebImageObjc",
             path: "SDWebImage",
             sources: ["Core", "Private"],
+            publicHeadersPath: "include",
             cSettings: [
                 .headerSearchPath("Core"),
                 .headerSearchPath("Private")
             ]
         ),
         .target(
+            name: "_SDWebImageSwift",
+            dependencies: ["_SDWebImageObjc"],
+            path: "SDWebImage",
+            sources: ["Swift"]
+        ),
+        .target(
             name: "SDWebImageMapKit",
             dependencies: ["SDWebImage"],
             path: "SDWebImageMapKit",
             sources: ["MapKit"]
-        )
+        ),
+        .testTarget(name: "DemoTests", dependencies: ["SDWebImage"]),
     ]
 )
